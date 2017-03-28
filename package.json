@@ -1,0 +1,27 @@
+{
+  "name": "drstuff",
+  "version": "1.0.0",
+  "description": "stuff n things",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pstuffa/drstuff.git"
+  },
+  "keywords": [
+    "stuff"
+  ],
+  "author": "pstuffa",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^2.4.2",
+    "express": "^4.14.0",
+    "fs": "0.0.2"
+  },
+  "bugs": {
+    "url": "https://github.com/pstuffa/drstuff/issues"
+  },
+  "homepage": "https://github.com/pstuffa/drstuff#readme"
+}
