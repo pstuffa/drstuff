@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <script src="vendor/d3.v4.min.js"></script>
+  <style>
+    
+    body {
+        background: #ffab00 !important;
+        font-family: "Helvetica Neue", Arial;
+        font-weight: 100;
+        font-size: 50px;
+    }
+    
+    #chart {
+      text-align: center;
+    }
+    
+    .dots {
+      fill: none;
+      stroke: #2f3337;
+      stroke-width: 1.5;
+    }
+
+    svg {
+      overflow: visible;
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <div id="chart"> </div>
+  <script>
+  
+  var margin = {top: 1, right: 1, bottom: 1, left: 1},
+      width = window.innerWidth - margin.left - margin.right,
+      height = window.innerHeight*5 - margin.top - margin.bottom,
+      depth = 100;
+
+  var y = d3.scaleLinear()
+      .range([height, 0])
+      .domain([0,1])
+
+  var y2 = d3.scaleLinear()
+      .range([height-height/4, height/4])
+      .domain([0,1])
+
+  var x = d3.scaleLinear()
+      .range([0, width])
+      .domain([0,1])
+
+  var colorScale = d3.scaleOrdinal()
+      .range(["#007f7e", "#ffab00", "#ff6500", "#018d73", "#ff4700"])
+
+  var firstWords = ["paul","small","tall","dr"],
+      lastWords = ["buffa", "stuffa", "ruffa", "gruffa"];
+
+  var svg = d3.select("#chart").append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+  var firstWord = svg.append("text")
+      .attr("class", "firstWord")
+      .attr("y", 100)
+      .attr("x", 100)
+      .style("text-anchor", "end")
+      .text(firstWords[Math.floor(Math.random()*4)])
+
+  var lastWord = svg.append("text")
+      .attr("class", "lastWord")
+      .attr("y", 100)
+      .attr("x", 102)
+      .style("text-anchor", "start")
+      .text(lastWords[Math.floor(Math.random()*4)])
+
+  d3.interval(function(elapsed) {
+
+    firstWord.transition()
+      .duration(1000)
+      .attr("y", -100)
+      .style("opacity", 0)
+      .transition()
+      .duration(100)
+      .attr("y", 100)
+      .text(firstWords[Math.floor(Math.random()*4)])
+      .transition()
+      .duration(1000)
+      .style("opacity", 1);
+    
+    }, 4000);
+
+  d3.timeout(function() {
+    d3.interval(function(elapsed) {
+
+      lastWord.transition()
+        .duration(1000)
+        .attr("y", height+100)
+        .style("opacity", 0)
+        .transition()
+        .duration(100)
+        .attr("y", 100)
+        .text(lastWords[Math.floor(Math.random()*4)])
+        .transition()
+        .duration(1000)
+        .style("opacity", 1);
+      
+      }, 4000)
+  }, 2000);
+
+
+  d3.interval(function(elapsed) {
+
+    var n = elapsed/500 > 500 ? 100 : elapsed/500;
+
+    svg.selectAll(".dots")
+       .data(d3.range(n).map(Object))
+     .enter().append("circle")
+       .attr("class", "dots")
+       .attr("cx", function() { return x(Math.random()); })
+       .attr("cy", function(d) { d.y = height; return d.y; })
+       .on("mouseenter", function() {
+         d3.select(this)
+         .transition()
+         .duration(5000)
+         .ease(d3.easeElastic)
+         .attr("cy", function(d) { return y2(Math.random()); })
+         .attr("r", function() { return 400*Math.random() })
+         .style("stroke-dasharray", "2, 3, 4, 5, 6")
+         .transition()
+         .duration(1000)
+         .ease(d3.easeLinear)
+         .style("stroke-dasharray", "4, 5, 6, 7, 8")
+         .style("opacity", .01)
+         .duration(1000)
+         .transition().remove()
+        })
+       .transition()
+       .duration(100)
+       .delay(function(d, i) { return i*100 })
+       .attr("r", 2)
+       .transition()
+       .duration(3000)
+       .ease(d3.easeElastic)
+       .duration(function() { return 10000*Math.random() })
+       .style("fill", function() { return colorScale(Math.random()); })
+       .attr("r", function() { return 50*Math.random()})
+       .attr("cy", function(d) {d.y = d.y - y(Math.random()); return d.y; })
+       .style("stroke-width", 2)
+    
+    }, 500*Math.random());
+
+
+  </script>
+</body>
