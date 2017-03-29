@@ -20,12 +20,16 @@ app.get('/', function (req, res) {
   	res.render('index.html');
 });
 
+app.get('/triangles', function (req, res) {
+  	res.render('triangles.html');
+});
+
 //heroku assigns app port randomly. DONT WORRY ABOUT IT
 app.set('port', port);
 
 // console log here actually sends to your terminal
 app.listen(port, function () {
-  console.log('Example app listening on port!', port);
+  console.log('Listening on port ', port);
 });
 
 
