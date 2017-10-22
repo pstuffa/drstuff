@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <script src="vendor/d3.v4.min.js"></script>
+  <style>
+    
+    body {
+        background: #ffab00;
+        font-family: "Helvetica Neue", Arial;
+        font-weight: 100;
+        font-size: 50px;
+    }
+     
+    #chart {
+      text-align: center;
+    }
+    
+    .dots {
+      fill: none;
+      stroke: #2f3337;
+      stroke-width: 1.5;
+    }
+
+    svg {
+      overflow: visible;
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <div id="chart"> </div>
+  <script>
+  
+  var margin = {top: 1, right: 1, bottom: 1, left: 1},
+      width = window.innerWidth - margin.left - margin.right,
+      height = window.innerHeight*5 - margin.top - margin.bottom,
+      depth = 100,
+      groupHeight = height/10,
+      groupWidth = width/3
+
+  var y = d3.scaleLinear()
+      .range([height, 0])
+      .domain([0,1])
+
+  var y2 = d3.scaleLinear()
+      .range([height-height/4, height/4])
+      .domain([0,1])
+
+  var x = d3.scaleLinear()
+      .range([0, width])
+      .domain([0,1])
+
+  var rotateScale = d3.scaleLinear()
+      .range([-45, 45])
+      .domain([0,1])
+
+  var x2 = d3.scaleLinear()
+      .range([width/2, width - width/4])
+      .domain([0,1])
+
+  var circlesColor = d3.scaleOrdinal()
+      .range(["#007f7e", "#ffab00", "#ff6500", "#018d73", "#ff4700"])
+
+  var trianglesColor = d3.scaleOrdinal()
+      .range(["#BB2233","#7f2c39", "#dd4237","#2B1F28"])
+
+  var firstWords = ["paul","tall","p", "small"],
+      lastWords = ["buffa", "stuffa", "gruffa", "tuffa"];
+
+  var linkSize = 100;
+
+  var linkY = d3.scaleLinear()
+      .range([0, linkSize])
+
+  var linkX = d3.scaleLinear()
+      .range([0, linkSize]);
+
+  var linkColorScale = d3.scaleOrdinal()
+      .domain(["gr","br","ta", "  "])
+      .range(["#adfc16","#df4812","#fd9138","none"])
+
+  var links = ["            grgrgrgrgrgr            \n          grgrgrgrgrgrgrgr          \n      ta  grbrbrbrbrbrbrgr  ta      \n      ta  brbrbrbrbrbrbrbr  ta      \n      tatabrtagrtatagrtabrtata      \n      tatabrtabrtatabrtabrtata      \n        tatatatatatatatatatabr      \n          grtatabrbrtatagrbrbr      \n      brbrbrbrbrtatatagrgrgrta      \n    brbrtabrbrbrbrgrgrgrgrgrta      \n    brtatatabrbrtabrbrgrgrbr        \n    brbrtabrbrbrtagrbrbrbrgr        \n    brbrtabrbrbrtabrbrgrgrgr        \n    brbrbrbrbrbrtagrgrgrbr          \n      tatatatata    brbrbr          \n                    brbrbr          \n","            grgrgrgrgrgr            \n          grgrgrgrgrgrgrgr          \n      ta  grbrbrbrbrbrbrgr  ta      \n      ta  brbrbrbrbrbrbrbr  ta      \n      tatabrtagrtatagrtabrtata      \n      tatabrtabrtatabrtabrtata      \n        tatatatatatatatatatabr      \n        grgrtatabrbrtatagrgrbr      \n    brbrbrbrbrtatatatagrgrbrbrbr    \n  brbrtabrbrbrbrgrgrgrgrgrtabrbr    \n  brtatatabrbrtabrbrgrgrtatatabr    \n  brbrtabrbrbrtagrbrbrbrbrtatata    \n  brbrtabrbrbrtabrbrgrgrgrgrta      \n  brbrbrbrbrbrtagrgrgrgrgrgr        \n    tatatatatabr    brbrbrbr        \n          brbrbr                    \n"]
+
+  var linkData = [];
+  links.forEach(function(link, linkNum) { 
+    link.split("\n").forEach(function(line, i) {
+      linkData.push({"num": linkNum,"points":line.match(/[\s\S]{1,2}/g)});
+    })
+  });
+  linkData = linkData.filter(function(d) { return d.points != null })
+
+  var loopIndex = 0;
+
+  linkX.domain([0, linkData[0].points.length]);
+  linkY.domain([0, linkData[0].points.length]);
+
+
+  var svg = d3.select("#chart").append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+  var firstWord = svg.append("text")
+      .attr("class", "firstWord")
+      .attr("y", 100)
+      .attr("x", 100)
+      .style("text-anchor", "end")
+      .text(firstWords[Math.floor(Math.random()*4)])
+
+  var lastWord = svg.append("text")
+      .attr("class", "lastWord")
+      .attr("y", 100)
+      .attr("x", 102)
+      .style("text-anchor", "start")
+      .text(lastWords[Math.floor(Math.random()*4)])
+
+  svg.append("text")
+      .data(["dots"])
+     .attr("x", width*.85)
+     .attr("y", height*.185)
+     .style("font-size", "20px")
+     .style("opacity",0)
+     .text("scroll around")
+     .transition()
+     .duration(5000)
+     .style("opacity",1)
+
+
+window.whatsPlaying = "dots";
+
+d3.interval(function(e) { 
+if(window.whatsPlaying == "dots") {
+
+
+        window.whatsPlaying = "triangles";
+        d3.select(".link").style("opacity", 1);
+        d3.selectAll("text").style("fill", "#fff")
+        d3.select(this).data(["triangles"])
+        dotsInterval.stop()
+        d3.selectAll(".dots").remove();
+        zeldaInterval.restart(function(elapsed) { zelda(elapsed) }, 500);
+        d3.select("body").transition().duration(1000).style("background-color", "#2B1F28").style("cursor","none");
+      } else {
+
+        window.whatsPlaying = "dots";
+
+        d3.select(".link").style("opacity", 0);
+        d3.selectAll("text").style("fill", "#000")
+        zeldaInterval.stop()
+        d3.selectAll(".triangle-group").remove();
+        dotsInterval.restart(function(elapsed) { moveDots(elapsed) }, 500);
+        d3.select("body").transition().duration(1000).style("background-color", "#ffab00").style("cursor","auto");
+      }
+}, 20000);
+
+
+
+  d3.interval(function(elapsed) {
+
+    firstWord.transition()
+      .duration(1000)
+      .attr("y", -100)
+      .style("opacity", 0)
+      .transition()
+      .duration(100)
+      .attr("y", 100)
+      .text(firstWords[Math.floor(Math.random()*4)])
+      .transition()
+      .duration(1000)
+      .style("opacity", 1);
+    
+    }, 4000);
+
+  d3.timeout(function() {
+    d3.interval(function(elapsed) {
+
+      lastWord.transition()
+        .duration(1000)
+        .attr("y", height+100)
+        .style("opacity", 0)
+        .transition()
+        .duration(100)
+        .attr("y", 100)
+        .text(lastWords[Math.floor(Math.random()*4)])
+        .transition()
+        .duration(1000)
+        .style("opacity", 1);
+      
+      }, 4000)
+  }, 2000);
+
+function moveDots(elapsed) {
+
+    var n = elapsed/250 > 500 ? 100 : elapsed/250;
+
+    svg.selectAll(".dots")
+       .data(d3.range(n).map(Object))
+     .enter().append("circle")
+       .attr("class", "dots")
+       .attr("cx", function() { return x(Math.random()); })
+       .attr("cy", function(d) { d.y = height; return d.y; })
+       .on("mouseenter", function() {
+         d3.select(this)
+         .transition()
+         .duration(5000)
+         .ease(d3.easeElastic)
+         .attr("cy", function(d) { return y2(Math.random()); })
+         .attr("r", function() { return 400*Math.random() })
+         .style("stroke-dasharray", "2, 3, 4, 5, 6")
+         .transition()
+         .duration(1000)
+         .ease(d3.easeLinear)
+         .style("stroke-dasharray", "4, 5, 6, 7, 8")
+         .style("opacity", .01)
+         .duration(1000)
+         .transition().remove()
+        })
+       .transition()
+       .duration(100)
+       .delay(function(d, i) { return i*100 })
+       .attr("r", 2)
+       .transition()
+       .duration(3000)
+       .ease(d3.easeElastic)
+       .duration(function() { return 10000*Math.random() })
+       .style("fill", function() { return circlesColor(Math.random()); })
+       .attr("r", function() { return 50*Math.random()})
+       .attr("cy", function(d) {d.y = d.y - y(Math.random()); return d.y; })
+       .style("stroke-width", 2)
+    
+    }
+
+var dotsInterval = d3.interval(function(elapsed) { moveDots(elapsed) }, 500*Math.random());
+
+
+d3.select("svg").on("ontouchstart" in document ? "touchmove" : "mousemove", linkMoves);
+
+function linkMoves() {
+  d3.select(".link")
+  .attr("transform","translate(" + (d3.event.pageX - linkSize/2) + "," + (d3.event.pageY-linkSize/2) + ")")
+}
+
+function zelda(elapsed) {
+
+  var n = elapsed/500 > 50 ? 50 : elapsed/500;
+
+  svg.selectAll(".triangle-group")
+     .data(d3.range(n).map(Object))
+   .enter().append("g")
+    .attr("class", "triangle-group")
+    .attr("transform", "scale(" + d3.randomUniform(1)() + ")")
+    .on("mouseenter", function() {
+
+       d3.select(this)
+         .selectAll("path")
+         .transition()
+         .duration(3000)
+         .ease(d3.easePoly)
+         .delay(function(d, i) { return i*200 })
+         .style("stroke",function(d,i) { return trianglesColor(i); })
+         .attr("transform","rotate(" + rotateScale(Math.random())+ ") scale(5) translate(" + (d3.event.pageX/Math.PI) + "," + (d3.event.pageY/Math.PI)  + ")")
+         .transition()
+         .duration(3000)
+         .style("opacity", 0);
+
+        d3.select(this)
+          .transition()
+          .delay(6000)
+          .remove()
+    })
+    .selectAll(".triangle")
+    .data(d3.range(4).map(Object))
+   .enter().append("path")
+    .attr("class", "triangle")
+    .attr("transform", "translate(" + x(Math.random()) + "," + y(d3.randomUniform(1)()) + ")" )
+    .attr("d", "M 0 " + (-groupHeight/3) + " L " + (-groupWidth/3) + " " + (groupHeight/3) + "L " + (groupWidth/3) + " " + (groupHeight/3) + " Z")
+    .style("fill",function(d,i) { return trianglesColor(i); })
+    .style("stroke",function(d,i) { return trianglesColor(i); })
+   .transition()
+   .duration(800)
+   .ease(d3.easePoly)
+   .delay(function(d, i) { return i*100 })
+   .style("stroke",function(d,i) { return trianglesColor(i); })
+   .attr("transform", "translate(" + x2(Math.random()) + "," + y(d3.randomUniform(1)()) + ")")
+   .transition()
+   .delay(2000)
+   .duration(2000)
+   .transition()
+   .duration(800)
+   .ease(d3.easePoly)
+   .delay(function(d, i) { return i*100 })
+   .style("stroke",function(d,i) { return trianglesColor(i); })
+   .attr("transform", "translate(" + x2(Math.random()) + "," + y(d3.randomUniform(1)()) + ")")
+
+}
+
+var zeldaInterval = d3.interval(function(elapsed) { zelda(elapsed) }, 500);
+zeldaInterval.stop();
+
+var linkZelda = svg.append("g")
+    .attr("class", "link")
+    .style("pointer-events","none")
+    .style("opacity", 0)
+    .selectAll(".block-group")
+    .data(linkData.filter(function(d) { return d.num == 0 }))
+  .enter().append("g")
+    .attr("class", "block-group")
+    .attr("transform", function(d,i) {return "translate(0," + linkY(i) + ")" } )
+    .selectAll(".block")
+    .data(function(d) { return d.points })
+  .enter().append("rect")
+    .attr("class", "block")
+    .attr("x", function(d, i) { return linkX(i) })
+    .attr("width", linkSize/linkX.domain()[1])
+    .attr("height", linkSize/linkY.domain()[1])
+    .style("stroke", function(d) { return linkColorScale(d) })
+    .style("fill", function(d) { return linkColorScale(d) });
+
+var indexNum = 0;
+d3.interval(function(elapsed) {
+  svg.selectAll(".block-group")
+      .data(linkData.filter(function(d) { return d.num == indexNum }))
+   .selectAll(".block")
+      .data(function(d) { return d.points })
+      .attr("x", function(d, i) { return linkX(i) })
+    .style("stroke", function(d) { return linkColorScale(d) })
+      .style("fill", function(d) { return linkColorScale(d) });
+
+      if(indexNum == links.length-1) {
+          indexNum = 0;
+      } else {
+          indexNum += 1;
+      }
+}, 300);
+
+
+
+  </script>
+</body>

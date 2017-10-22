@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <script src="vendor/d3.v4.min.js"></script>
+  <style>
+    
+    body {
+        font-family: "Helvetica Neue", Arial;
+        font-weight: 100;
+        font-size: 50px;
+    }
+     
+    #chart {
+      text-align: center;
+    }
+    
+    .dots {
+      fill: none;
+      stroke: #2f3337;
+      stroke-width: 1.5;
+    }
+
+    svg {
+      overflow: visible;
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <div id="chart"> </div>
+  <script>
+  
+  var margin = {top: 1, right: 1, bottom: 1, left: 1},
+      width = window.innerWidth - margin.left - margin.right,
+      height = window.innerHeight*5 - margin.top - margin.bottom;
+
+  var colorScale = d3.scaleOrdinal()
+      .range(["#007f7e", "#ffab00", "#ff6500", "#018d73", "#ff4700"])
+
+  var firstWords = ["paul","small","tall","dr"],
+      lastWords = ["buffa", "stuffa", "ruffa", "gruffa"];
+
+var svg = d3.select("#chart").append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+     
+  var g = svg.append("g")
+      .attr("class", "circleWrapper")
+      .style("filter", "url(#gooeyCodeFilter)");
+
+  var firstWord = svg.append("text")
+      .attr("class", "firstWord")
+      .attr("y", 100)
+      .attr("x", 100)
+      .style("text-anchor", "end")
+      .text(firstWords[Math.floor(Math.random()*4)])
+
+  var lastWord = svg.append("text")
+      .attr("class", "lastWord")
+      .attr("y", 100)
+      .attr("x", 102)
+      .style("text-anchor", "start")
+      .text(lastWords[Math.floor(Math.random()*4)])
+
+  svg.append("a")
+     .attr("href","/triangles")
+     .append("text")
+     .attr("x", width*.9)
+     .attr("y", height*.1)
+     .style("font-size", "20px")
+     .text("click me")
+
+  d3.interval(function(elapsed) {
+
+    firstWord.transition()
+      .duration(1000)
+      .attr("y", -100)
+      .style("opacity", 0)
+      .transition()
+      .duration(100)
+      .attr("y", 100)
+      .text(firstWords[Math.floor(Math.random()*4)])
+      .transition()
+      .duration(1000)
+      .style("opacity", 1);
+    
+    }, 4000);
+
+  d3.timeout(function() {
+    d3.interval(function(elapsed) {
+
+      lastWord.transition()
+        .duration(1000)
+        .attr("y", height+100)
+        .style("opacity", 0)
+        .transition()
+        .duration(100)
+        .attr("y", 100)
+        .text(lastWords[Math.floor(Math.random()*4)])
+        .transition()
+        .duration(1000)
+        .style("opacity", 1);
+      
+      }, 4000)
+  }, 2000);
+
+var n = 500;
+
+var x = d3.scaleLinear()
+    .range([0, width/6])
+    .domain([0, 1 ]);
+
+var y = d3.scaleLinear()
+    .range([height, 0])
+    .domain([0, n]);
+
+var sizeScale = d3.scaleLinear()
+    .domain([0,1])
+    .range([10, 40])
+
+var colorScale = d3.scaleSequential(d3.interpolateCool)
+      .domain([0, 1]);
+  
+var dataset = d3.range(n).map(function() { return Math.random(); })                           
+  
+var left = g.append("g")
+      .attr("transform", "translate(" + width/2 + "," + margin.top + ")");
+  
+ // from http://bl.ocks.org/nbremer/e627a8fced026a9286932c6c0a02d71b
+  var defs = g.append("defs");
+  var filter = defs.append("filter").attr("id","gooeyCodeFilter");
+  filter.append("feGaussianBlur")
+    .attr("in","SourceGraphic")
+    .attr("stdDeviation","8")
+    //to fix safari: http://stackoverflow.com/questions/24295043/svg-gaussian-blur-in-safari-unexpectedly-lightens-image
+    .attr("color-interpolation-filters","sRGB") 
+    .attr("result","blur");
+  filter.append("feColorMatrix")
+    .attr("in","blur")
+    .attr("mode","matrix")
+    .attr("values","1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7")
+    .attr("result","gooey");
+  
+left.selectAll(".left-circles")
+    .data(dataset)
+  .enter().append("circle")
+    .attr("class","left-circles")
+    .attr("r", function(d, i) { return sizeScale(d); })
+    .attr("cx", function(d, i) { return x(d); })
+    .attr("cy", function(d, i) { return y(i); })
+    .style("fill", function(d, i) { return colorScale(d); })
+    .attr("transform", "scale(1, 1)");
+
+var right = g.append("g")
+      .attr("transform", "translate(" + width/2 + "," + margin.top + ")")
+  
+ right.selectAll(".right-circles")
+    .data(dataset)
+  .enter().append("circle")
+    .attr("class","right-circles")
+    .attr("r", function(d, i) { return sizeScale(d); })
+    .attr("cx", function(d, i) { return x(d); })
+    .attr("cy", function(d, i) { return y(i); })
+    .style("fill", function(d, i) { return colorScale(d); })
+    .attr("transform", "scale(-1, 1)");
+
+var interpolators = [
+    "Viridis",
+    "Inferno",
+    "Magma",
+    "Plasma",
+    "Warm",
+    "Cool",
+    "Rainbow",
+    "CubehelixDefault"
+    ]
+
+var colorIndex = 0;
+
+function update() {
+
+  var colorScale = d3.scaleSequential(d3["interpolate" + interpolators[colorIndex]])
+      .domain([0, 1]);
+
+  if(colorIndex == (interpolators.length-1)) {
+    colorIndex = 0;
+  } else {
+    colorIndex += 1;
+  }
+  
+    // Get the data again   
+    var newdata = d3.range(n).map(function() { return d3.randomUniform(1)(); });
+
+    d3.selectAll(".left-circles")
+      .data(newdata)
+      .transition()
+      .delay(function(d,i) { return i*10 })
+      .duration(2000)
+      .attr("r", function(d, i) { return sizeScale(d); })
+      .style("fill", function(d, i) { return colorScale(d); })
+      .attr("cx", function(d, i) { return x(d); })
+      .attr("cy", function(d, i) { return y(i); });
+
+      d3.selectAll(".right-circles")
+      .data(newdata)
+      .transition()
+      .delay(function(d,i) { return i*10 })
+      .duration(2000)
+      .attr("r", function(d, i) { return sizeScale(d); })
+      .style("fill", function(d, i) { return colorScale(d); })
+      .attr("cx", function(d, i) { return x(d); })
+      .attr("cy", function(d, i) { return y(i); });
+
+}
+
+d3.interval(update, 6000);
+
+
+  </script>
+</body>

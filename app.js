@@ -24,6 +24,18 @@ app.get('/triangles', function (req, res) {
   	res.render('triangles.html');
 });
 
+app.get('/shift', function (req, res) {
+  	res.render('shift.html');
+});
+
+app.get('/ror', function (req, res) {
+  	res.render('ror.html');
+});
+
+app.get('/drstuff', function (req, res) {
+  	res.render('drstuff.html');
+}); 
+
 //heroku assigns app port randomly. DONT WORRY ABOUT IT
 app.set('port', port);
 
