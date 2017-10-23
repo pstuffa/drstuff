@@ -34,7 +34,7 @@
 
   var margin = {top: 1, right: 1, bottom: 1, left: 1},
       width = window.innerWidth - margin.left - margin.right,
-      height = window.innerHeight*5 - margin.top - margin.bottom;
+      height = window.innerHeight - margin.top - margin.bottom;
 
   var svg = d3.select("#chart").append("svg")
       .attr("width", width + margin.left + margin.right)
@@ -89,27 +89,31 @@
 
   function evaluatePages(n) {
     if(n == 0) {
-      d3.select("body").transition().style("background-color", "#ffab00")
+      d3.select("body").style("background-color", "#ffab00")
       svg.call(bubbles);
     }
     if(n == 1) {
       reset();
       d3.select("body").transition().style("background-color", "#2B1F28")
+      d3.selectAll("text").transition().style("fill", "#fff")
       svg.call(triangles);
     }
     if(n == 2) {
       reset();
       d3.select("body").transition().style("background-color", "#fff")
+      d3.selectAll("text").transition().style("fill", "#000")
       svg.call(inkblots);
     }
     if(n == 3) {
       reset();
       d3.select("body").transition().style("background-color", "#2B1F28")
+      d3.selectAll("text").transition().style("fill", "#fff")
       svg.call(bubbles.colorScale(d3.scaleOrdinal().range(["#BB2233","#7f2c39", "#dd4237","#2B1F28"])));
     }
     if(n == 4) {
       reset();
       d3.select("body").transition().style("background-color", "#ffab00")
+      d3.selectAll("text").transition().style("fill", "#000")
       svg.call(triangles.colorScale(d3.scaleOrdinal().range(["#007f7e",  "#ff6500", "#018d73","#ffab00", "#ff4700"])));
     }
     if(n == 5) {
@@ -119,9 +123,11 @@
     }
     if(n == 6) {
       d3.select("body").transition().style("background-color", "#2B1F28")
+      d3.selectAll("text").transition().style("color", "#fff")
     }
     if(n == 7) {
       d3.select("body").transition().style("background-color", "#fff")
+      d3.selectAll("text").transition().style("color", "#000")
     }
   }
 

@@ -13,10 +13,10 @@ function chart(selection) {
       .attr("class", "circleWrapper")
       .style("filter", "url(#gooeyCodeFilter)");
 
-  var n = 400;
+  var n = 300;
 
   var x = d3.scaleLinear()
-      .range([0, width/6])
+      .range([0, width/3])
       .domain([0, 1 ]);
 
   var y = d3.scaleLinear()

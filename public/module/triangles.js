@@ -8,8 +8,8 @@
   function chart(selection) {
     selection.each(function(data) {
 
-    var groupHeight = height/10
-      , groupWidth = width/3;
+    var groupHeight = 300
+      , groupWidth = 425;
 
     var y = d3.scaleLinear()
         .range([height, 0])
