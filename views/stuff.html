@@ -6,6 +6,7 @@
   <script src="module/bubbles.js"></script>
   <script src="module/triangles.js"></script>
   <script src="module/inkblot.js"></script>
+  <script src="module/ossilloscope.js"></script>
   <script src="module/reset.js"></script>
   <style>
     
@@ -30,9 +31,9 @@
   <div id="chart"> </div>
   <script>
 
-  window.windowTimer;
+  window.windowTimer = d3.interval(function() {}, 10000);
 
-  var margin = {top: 1, right: 1, bottom: 1, left: 1},
+  var margin = {top: 0, right: 0, bottom: 0, left: 0},
       width = window.innerWidth - margin.left - margin.right,
       height = window.innerHeight - margin.top - margin.bottom;
 
@@ -57,6 +58,13 @@
     .attr("values","1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7")
     .attr("result","gooey");
 
+  var filterSpeck = defs.append("filter").attr("id","spect");
+    
+  var turbulence = filterSpeck.append("feTurbulence")
+      .attr("baseFrequency",".4")
+      .attr("numOctaves","2")
+      .attr("seed", 201);
+
   var textSlide = setTextSlide() 
       .height(height)
       .width(width)
@@ -77,18 +85,24 @@
       .width(width)
       .margin(margin);
 
+  var ossilloscope = setOssilloscope()
+      .height(height)
+      .width(width)
+      .margin(margin);
+
   svg.call(textSlide);
 
-  var pageIndex = 0;
-  evaluatePages(pageIndex);
+  window.pageIndex = 0;
+  flipPages(pageIndex);
 
   d3.interval(function() {
-    pageIndex += 1;
-    evaluatePages(pageIndex);
-  }, 6000);
+    window.pageIndex += 1;
+    flipPages(pageIndex);
+  }, 4000);
 
-  function evaluatePages(n) {
+  function flipPages(n) {
     if(n == 0) {
+      reset();
       d3.select("body").style("background-color", "#ffab00")
       svg.call(bubbles);
     }
@@ -118,16 +132,29 @@
     }
     if(n == 5) {
       reset();
+      d3.select("body").style("background-color", "#2f3337")
+      svg.call(ossilloscope);
+    }
+    if(n == 6) {
+      reset();
       d3.select("body").transition().style("background-color", "#fff")
       svg.call(inkblots);
     }
-    if(n == 6) {
+    if(n == 7) {
       d3.select("body").transition().style("background-color", "#2B1F28")
       d3.selectAll("text").transition().style("color", "#fff")
     }
-    if(n == 7) {
+    if(n == 8) {
       d3.select("body").transition().style("background-color", "#fff")
       d3.selectAll("text").transition().style("color", "#000")
+    }
+    if(n == 9) {
+      reset();
+      d3.select("body").style("background-color", "#2f3337")
+      svg.call(ossilloscope);
+    }
+    if(n == 10) {
+      window.pageIndex = -1;
     }
   }
 
