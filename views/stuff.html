@@ -104,7 +104,7 @@
   d3.interval(function() {
     window.pageIndex += 1;
     flipPages(pageIndex);
-  }, 10000);
+  }, 15000);
 
   function flipPages(n) {
     if(n == 0) {
@@ -135,26 +135,12 @@
       svg.call(inkblots);
     }
     if(n == 6) {
-      d3.select("body").transition().style("background-color", "#fff")
-      d3.selectAll("text").transition().style("color", "#000")
-    }
-    if(n == 7) {
-      reset();
-      d3.select("body").style("background-color", "#2f3337")
-      svg.call(ossilloscope);
-    }
-    if(n == 8) {
-      reset();
-      d3.select("body").style("background-color", "#2f3337")
-      svg.call(ossilloscope);
-    }
-    if(n == 9) {
       reset();
       d3.select("body").transition().style("background-color", "#fff")
       d3.selectAll("text").transition().style("color", "#000")
       svg.call(fase);
     }
-    if(n == 10) {
+    if(n == 7) {
       window.pageIndex = -1;
     }
   }

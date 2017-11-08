@@ -53,12 +53,6 @@ filter.append("feColorMatrix")
   .attr("values","1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7")
   .attr("result","gooey");
 
-var filterSpeck = defs.append("filter").attr("id","spect");
-  
-var turbulence = filterSpeck.append("feTurbulence")
-    .attr("baseFrequency",.0)
-    .attr("numOctaves","1")
-    .attr("seed", 2000);
 
 svg.append("line")
   .attr("class", "line")
@@ -73,11 +67,6 @@ svg.append("line")
   .attr("x2", 25)
   .attr("y1", 25)
   .attr("y2", 100);
-
-svg.append("path")  
-  .style("fill", "#fff")
-  .style("filter", "url(#spect)")
-  .attr("d",  "M" + (window.innerWidth*.805) + " 0 " + (window.innerWidth) + " 0 L " + (window.innerWidth) + " " + (window.innerHeight) + " Z")
 
 var taco = d3.select("#taco").attr("x", 80).attr("y", 150)
   , burrito = d3.select("#burrito").attr("x", 90).attr("y", 200);
@@ -111,7 +100,6 @@ d3.timeout(function() {
   d3.interval(function() {
 
     burrito.style("opacity", i % 3 == 0 ? .2 : 1);
-    turbulence.attr("baseFrequency",i/10000);
     ++i;
 
     if(i % 10 == 0) {
