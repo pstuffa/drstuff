@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <script src="vendor/d3.v4.min.js"></script>
+  <style>
+    
+    body {
+        font-family: "Helvetica Neue", Arial;
+        font-weight: 100;
+        font-size: 50px;
+    }
+
+    a {
+      text-decoration: none; 
+      color: #000;
+    }
+
+    #burrito {
+      position: absolute;
+      top: -400px;
+      right: -400px;
+      max-width: 2000px;
+      font-size: 12px;
+      transform: rotate(45deg);
+    }
+
+    #taco {
+      position: absolute;
+      top: 0px;
+      /*left: 50%;*/
+      text-align: middle;
+    }
+
+  </style>
+</head>
+
+<body>
+  <center>
+    <div id="burrito"></div>
+    <div id="taco">
+    <div>virus downloading directly into the brain...</div>
+    <div> <a href='/stuff'></a> </div>
+    </div>
+
+    <iframe width="0" height="0" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/250415290&amp;color=none&amp;auto_play=true&amp;hide_related=false&amp;show_comments=true&amp;show_user=false&amp;show_reposts=false&amp;show_teaser=false&amp;visual=false"></iframe>
+  </center>
+
+    <script>
+
+     var i = 0;
+     var taco = d3.select("#taco")
+       , burrito = d3.select("#burrito")
+       , tacoLoc = 0
+       , interval = 20000;
+
+     // success page 
+     d3.timeout(function() {
+
+      d3.interval(function() {
+        tacoLoc = (tacoLoc > (window.innerHeight-100) ? 0 : (tacoLoc+10));
+        taco.style("top", tacoLoc + "px")
+      }, 10) 
+
+     }, 1000)
+
+     var main;
+     // success page 
+     d3.timeout(function() {
+      d3.select("a").text("success!")
+      main = d3.interval(function() {
+        if(i % 2 == 0) {
+          d3.select("a").style("color", "green");
+        } else {
+          d3.select("a").style("color", "#000");
+        }
+        i += 1;
+      }, 10)
+     }, 2000)
+
+     var t;
+     d3.timeout(function() {
+      t = d3.interval(function() {
+       var randomNum = Math.random();
+       // var newText = burrito.text();
+       burrito.append("span").text("downloaded by the zeitgeist ")
+          .style("font-weight", randomNum > .7 ? 600 : 100 );
+      }, 1);
+     }, 1000)
+
+
+     d3.timeout(function() {
+      burrito.text("").style("transform", "rotate(-87deg)").style("right", "-400px")
+      t.stop();
+      t = d3.interval(function() {
+       var randomNum = Math.random();
+       // var newText = burrito.text();
+       burrito.append("span").text("hound goaded by the blight heist")
+          .style("font-weight", randomNum > .7 ? 600 : 100 );
+      }, 1) 
+     }, interval)
+
+     var rotate = 0;
+     d3.timeout(function() {
+      burrito.text("").style("transform", "rotate(" + rotate + "deg)").style("bottom", "400px").style("top", "0px")
+      t.stop();
+      t = d3.interval(function() {
+       var randomNum = Math.random();
+       // var newText = burrito.text();
+       rotate += 1;
+       burrito.style("transform", "rotate(" + rotate + "deg)")
+       burrito.append("span").text("downroted by the lite-geist")
+          .style("font-weight", randomNum > .9 ? 600 : 100 );
+      }, 10) 
+     }, interval*2)
+
+
+     var rotateAgain = 0;
+     d3.timeout(function() {
+      burrito.text("").style("transform", "rotate(" + rotate + "deg)").style("bottom", "400px").style("top", "0px")
+      t.stop();
+      main.stop();
+      t = d3.interval(function() {
+       var randomNum = Math.random();
+       // var newText = burrito.text();
+       rotateAgain += 1;
+       burrito.remove();
+       taco.style("transform", "rotate(" + rotateAgain + "deg)")
+          .style("top", tacoLoc + "px")
+          .style("left", tacoLoc + "px")
+          .text(randomNum > .7 ? "failure :(" : "success!")
+          .style("color", randomNum > .7 ? "red" : "green");
+
+      }, 10) 
+     }, interval*3)
+
+
+    </script>
+</body>

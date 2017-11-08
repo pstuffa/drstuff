@@ -25,7 +25,7 @@ function chart(selection) {
 
   var sizeScale = d3.scaleLinear()
       .domain([0,1])
-      .range([10, 40])
+      .range([5, 40])
 
   var colorScale = d3.scaleSequential(d3.interpolateCool)
         .domain([0, 1]);

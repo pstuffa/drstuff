@@ -12,6 +12,8 @@
   function chart(selection) {
     selection.each(function(data) {
 
+    window.turbulence.attr("baseFrequency",".4");
+
     var y = d3.scaleLinear()
         .range([height, 0])
         .domain([-1,1])

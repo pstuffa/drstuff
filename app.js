@@ -18,6 +18,14 @@ app.get('/stuff', function (req, res) {
   	res.render('stuff.html');
 });
 
+app.get('/success', function (req, res) {
+  	res.render('virus.html');
+});
+
+app.get('/projects', function (req, res) {
+  	res.render('projects.html');
+});
+
 app.set('port', port);
 app.listen(port, function () {
   console.log('Listening on port ', port);
