@@ -25,18 +25,23 @@
       overflow: visible;
     }
 
+    a {
+      text-decoration: none;
+    }
+
   </style>
 </head>
 <body>
-
   <div id="chart"> </div>
+  <!-- <a href="/projects"> projects </a> -->
   <script>
 
   window.windowTimer = d3.interval(function() {}, 10000);
+  window.fontColor = "#000";
 
   var margin = {top: 0, right: 0, bottom: 0, left: 0},
       width = window.innerWidth - margin.left - margin.right,
-      height = window.innerHeight*2 - margin.top - margin.bottom;
+      height = window.innerHeight - margin.top - margin.bottom;
 
   var svg = d3.select("#chart").append("svg")
       .attr("width", width + margin.left + margin.right)
@@ -115,32 +120,28 @@
     if(n == 1) {
       reset();
       d3.select("body").transition().style("background-color", "#2B1F28")
-      d3.selectAll("text").transition().style("fill", "#fff")
+      window.fontColor = "#fff"
       svg.call(triangles);
     }
     if(n == 2) {
       reset();
       d3.select("body").transition().style("background-color", "#fff")
-      d3.selectAll("text").transition().style("fill", "#000")
+      window.fontColor = "#000"
       svg.call(inkblots);
     }
     if(n == 4) {
       reset();
       d3.select("body").style("background-color", "#2f3337")
+      window.fontColor = "#fff"
       svg.call(ossilloscope);
     }
     if(n == 5) {
       reset();
       d3.select("body").transition().style("background-color", "#fff")
-      svg.call(inkblots);
-    }
-    if(n == 6) {
-      reset();
-      d3.select("body").transition().style("background-color", "#fff")
-      d3.selectAll("text").transition().style("color", "#000")
+      window.fontColor = "#000"
       svg.call(fase);
     }
-    if(n == 7) {
+    if(n == 6) {
       window.pageIndex = -1;
     }
   }

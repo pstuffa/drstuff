@@ -53,7 +53,6 @@ filter.append("feColorMatrix")
   .attr("values","1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7")
   .attr("result","gooey");
 
-
 svg.append("line")
   .attr("class", "line")
   .attr("x1", 25)
@@ -71,6 +70,26 @@ svg.append("line")
 var taco = d3.select("#taco").attr("x", 80).attr("y", 150)
   , burrito = d3.select("#burrito").attr("x", 90).attr("y", 200);
 
+var projectList = [
+  {title: "streeteasy", link: "https://streeteasy.com/tippingpoint", desc: "i worked with StreetEasy to build an interactive tool to help potential home owners understand the benefits of buying vs renting a home in New York City."},
+  {title: "biz dashboard", link: "http://pstuffa.github.io/dashboard/", desc: "a sample business dashboard"},
+  {title: "ultrarunning talk", link: "http://pstuffa.github.io/ultrarunning/", desc: "a talk I did on ultraunning"},
+  {title: "blocks", link: "http://bl.ocks.org/pstuffa", desc: "sample d3 work"},
+  {title: "linkedin", link: "https://www.linkedin.com/in/paul-buffa/", desc: "linkedin page"},
+  {title: "athlinks", link: "https://www.athlinks.com/athletes/156736893", desc: "races I've done"}
+]
+
+svg.append("g")
+  .attr("transform", "translate(90, 300)")
+  .selectAll("a") 
+  .data(projectList)
+  .enter().append("g")
+  .attr("transform", function(d, i) { return "translate(0," + i*20 + ")" })
+  .append("a") 
+    .attr("xlink:href", function(d) { return d.link })
+    .append("text")
+    .text(function(d) { return d.title})
+
 var gloop = svg.append("g")
     .style("filter", "url(#gooeyCodeFilter)")
 
@@ -84,7 +103,7 @@ var glap = svg.append("g")
     .style("filter", "url(#gooeyCodeFilter)")
 
 glap.append("circle")
-  .attr("cx", window.innerWidth*.901)
+  .attr("cx", window.innerWidth*.9)
   .attr("cy", 75)
   .attr("r", 50)
   .style("fill", "#fff")
