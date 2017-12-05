@@ -14,6 +14,10 @@ app.get('/', function (req, res) {
   	res.render('index.html');
 });
 
+app.get('/squares', function (req, res) {
+  	res.render('squares.html');
+});
+
 app.get('/stuff', function (req, res) {
   	res.render('stuff.html');
 });

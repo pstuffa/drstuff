@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <script src="./vendor/d3.v4.min.js"></script>
+</head>
+
+<style>
+      body {
+        background: #2f3337 !important;
+    }
+    
+</style>
+<body align="center">
+
+    <script>
+
+    var colorScaleOne = d3.scalePow()
+        .exponent(.8)
+        .domain([0, 25])
+        .range(["#c9b9df", "#5e3f8d"]);
+
+    var colorScaleTwo = d3.scalePow()
+        .exponent(.8)
+        .domain([0, 25])
+        .range(["#4d3d69", "#2f2541"]);
+
+    var width = window.innerHeight*.98,
+        height = window.innerHeight*.98,
+        margin = {top: 0, bottom: 0, right: 0, left: 0}
+
+    var svg = d3.select("body").append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+
+    // Thanks https://bl.ocks.org/nbremer/e944485869ac8fd57413a158e9d8aae0
+    var defs = svg.append("defs");
+
+      //Create a radial Sun-like gradient
+      defs.append("radialGradient")
+        .attr("id", "sun-gradient")
+        .attr("cx", "50%")  //not really needed, since 50% is the default
+        .attr("cy", "50%")  //not really needed, since 50% is the default
+        .attr("r", "50%") //not really needed, since 50% is the default
+        .selectAll("stop")
+        .data([
+            {offset: "0%", color: "#fb732d"},
+            {offset: "33%", color: "#fb222b"},
+            {offset: "95%", color: "#801116"},
+            {offset: "100%", color: "#2f3337"}
+          ])
+        .enter().append("stop")
+        .attr("offset", function(d) { return d.offset; })
+        .attr("stop-color", function(d) { return d.color; });
+
+      svg.append("circle")
+        .attr("r", width/2)
+        .attr("cx", width/2)
+        .attr("cy", height/2)
+        .style("fill", "url(#sun-gradient)");
+
+    var n = 6,
+        quadrants = 4,
+        rowHeight = height/2/n,
+        cellWidth = width/2/n;
+
+    // Lay out quandrants
+    var quadrants = svg.selectAll(".quadrant")
+          .data(d3.range(quadrants).map(Object))
+        .enter().append("g")
+          .attr("class", "quadrant")
+          .attr("transform", function(d, i) { 
+            if(i == 0) {
+              return "translate(0,0)"
+            } else if(i == 1) {
+              return "translate(" + width/2 + ",0)"
+            } else if(i == 2) {
+              return "translate(0," + height/2 + ")"
+            } else {
+              return "translate(" + width/2 + "," + height/2 + ")"
+            }
+          })
+
+    // within each quadrant, there is a 6 by 6
+    var rows = quadrants.selectAll(".quadrant-row")
+        .data(d3.range(n).map(Object))
+      .enter().append("g")
+        .attr("class", "quadrant-row")
+        .attr("transform", function(d, i) { return "translate(0," + rowHeight*i + ")" })
+
+    var cells = rows.selectAll(".cell")
+        .data(d3.range(n).map(Object))
+      .enter().append("g")
+        .attr("class", "cell")
+        .attr("transform", function(d, i) { 
+          console.log(90*this.parentNode.parentNode.__data__.valueOf());
+
+          var quadrantValue = this.parentNode.parentNode.__data__.valueOf();
+          if(quadrantValue == 1) {
+            return "translate(" + (cellWidth*i + cellWidth) + ",0) rotate(90)"
+          } else if(quadrantValue == 2) {
+            return "translate(" + (cellWidth*i) + "," + rowHeight + ") rotate(270)"
+          } else if(quadrantValue == 3) {
+            return "translate(" + (cellWidth*i + cellWidth) + "," + rowHeight + ") rotate(180)"
+          } else {
+            return "translate(" + cellWidth*i + ",0)"
+          }})
+
+    // create clip paths for each 
+    var clipPath = cells.append("clipPath")
+      .attr("id","rect-clip")
+      .append("path")
+      .attr("d", "M0,0L 0," + (rowHeight*1/2) + "L" + (cellWidth*1/2) + "," + (rowHeight*1/2) + "L" + (cellWidth*1/2) + "," + (rowHeight) + "L" + (cellWidth) + "," + (rowHeight) + "L" + (cellWidth) + ",0Z")
+
+    var intervalI = 0
+    d3.interval(function() {
+      if(intervalI % 2 == 0) {
+        clipPath
+        .transition()
+        .duration(2500)
+        .attrTween("d", pathTween("M0,0L 0," + rowHeight + "L" + cellWidth + "," + rowHeight + "L" + cellWidth + ",0Z", 4))
+      } else {
+        clipPath
+        .transition()
+        .duration(2500)
+        .attrTween("d", pathTween("M0,0L 0," + (rowHeight*1/2) + "L" + (cellWidth*1/2) + "," + (rowHeight*1/2) + "L" + (cellWidth*1/2) + "," + (rowHeight) + "L" + (cellWidth) + "," + (rowHeight) + "L" + (cellWidth) + ",0Z", 4))
+      }
+      intervalI += 1;
+    }, 3000);
+
+    // Making first triangle
+    cells.append("path")
+        .attr("clip-path","url(#rect-clip)")
+        .attr("d", "M0,0 L 0," + rowHeight + "L" + cellWidth + ",0Z") 
+        .style("fill", function(d, i) { 
+          var quadrantI = this.parentNode.parentNode.parentNode.__data__.valueOf()
+            , rowI = this.parentNode.parentNode.__data__.valueOf()
+            , cellI = this.parentNode.__data__.valueOf()
+            , val;
+
+            if(quadrantI == 3) {
+              val = (5 - cellI) * (5-rowI);
+            } else if (quadrantI == 2) {
+              val = cellI * (5-rowI);
+            } else if (quadrantI == 1) {
+              val = (5 - cellI) * rowI;
+            } else {
+              val = cellI*rowI;
+            }
+          return (quadrantI == 0 || quadrantI == 3)  ? colorScaleTwo(val) : colorScaleOne(val);
+        });
+
+    // Make 2nd triangle
+    cells.append("path")
+        .attr("clip-path","url(#rect-clip)")
+        .attr("d", "M0," + rowHeight + " L" + cellWidth + "," + rowHeight + "L" + cellWidth + ",0Z") 
+        .style("fill", function(d, i) { 
+          var quadrantI = this.parentNode.parentNode.parentNode.__data__.valueOf()
+            , rowI = this.parentNode.parentNode.__data__.valueOf()
+            , cellI = this.parentNode.__data__.valueOf()
+            , val;
+            if(quadrantI == 3) {
+              val = (5 - cellI) * (5-rowI);
+            } else if (quadrantI == 2) {
+              val = cellI * (5-rowI);
+            } else if (quadrantI == 1) {
+              val = (5 - cellI) * rowI;
+            } else {
+              val = cellI*rowI;
+            }
+          return (quadrantI == 0 || quadrantI == 3)  ? colorScaleOne(val) : colorScaleTwo(val);
+        });
+
+
+function pathTween(d1, precision) {
+  return function() {
+    var path0 = this,
+        path1 = path0.cloneNode(),
+        n0 = path0.getTotalLength(),
+        n1 = (path1.setAttribute("d", d1), path1).getTotalLength();
+
+    // Uniform sampling of distance based on specified precision.
+    var distances = [0], i = 0, dt = precision / Math.max(n0, n1);
+    while ((i += dt) < 1) distances.push(i);
+    distances.push(1);
+
+    // Compute point-interpolators at each distance.
+    var points = distances.map(function(t) {
+      var p0 = path0.getPointAtLength(t * n0),
+          p1 = path1.getPointAtLength(t * n1);
+      return d3.interpolate([p0.x, p0.y], [p1.x, p1.y]);
+    });
+
+    return function(t) {
+      return t < 1 ? "M" + points.map(function(p) { return p(t); }).join("L") : d1;
+    };
+  };
+}
+
+    </script>
+</body>
+
+
