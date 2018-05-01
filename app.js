@@ -30,6 +30,11 @@ app.get('/projects', function (req, res) {
   	res.render('projects.html');
 });
 
+app.get('/dew', function (req, res) {
+  	res.render('morningdew.html');
+});
+
+
 app.set('port', port);
 app.listen(port, function () {
   console.log('Listening on port ', port);
