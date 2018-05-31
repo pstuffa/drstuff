@@ -18,6 +18,10 @@ app.get('/squares', function (req, res) {
   	res.render('squares.html');
 });
 
+app.get('/me', function (req, res) {
+  	res.render('aboutme.html');
+});
+
 app.get('/stuff', function (req, res) {
   	res.render('stuff.html');
 });

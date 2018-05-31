@@ -25,14 +25,22 @@
 
     #iframeDiv {
       position: absolute;
-      top: 200px;
+      top: 190px;
+      left: 220px;
+      height: 450px;
+      width: 800px;
+    }
+
+    #brokenDiv {
+      position: absolute;
+      top: 240px;
       left: 220px;
       height: 450px;
       width: 800px;
     }
 
     #iframeDiv iframe {
-      border: none;
+      border: 1px solid #000;
       text-decoration: none;
     }
 
@@ -53,12 +61,21 @@ var svg = d3.select("svg")
     .attr("height", window.innerHeight);
 
 
+
+var brokenDiv = d3.select("body")
+    .append("div")
+    .attr("id", "brokenDiv")
+    .attr("top", 900)
+    .attr("height", 450)
+    .style("opacity", 0)
+    .html("<h2> iframe doesn't work for this site, so just click on the link. </h2>")
 var iframeDiv = d3.select("body")
     .append("div")
     .attr("id", "iframeDiv")
     .append("iframe")
-    .attr("width", 900)
-    .attr("height", 450)
+    .attr("width", 1100)
+    .attr("height", 550)
+    .style("opacity", 0)
 
 
 var defs = svg.append("defs");
@@ -94,13 +111,14 @@ var taco = d3.select("#taco").attr("x", 80).attr("y", 150)
   , burrito = d3.select("#burrito").attr("x", 90).attr("y", 200);
 
 var projectList = [
-  {title: "streeteasy", link: "https://streeteasy.com/tippingpoint", desc: "i worked with StreetEasy to build an interactive tool to help potential home owners understand the benefits of buying vs renting a home in New York City."},
-  {title: "biz dashboard", link: "http://pstuffa.github.io/dashboard/", desc: "a sample business dashboard"},
-  {title: "ultrarunning talk", link: "http://pstuffa.github.io/ultrarunning/", desc: "a talk I did on ultraunning"},
-  {title: "blocks", link: "https://bl.ocks.org/pstuffa", desc: "sample d3 work"},
-  {title: "linkedin", link: "https://www.linkedin.com/in/paul-buffa/", desc: "linkedin page"},
-  {title: "athlinks", link: "https://www.athlinks.com/athletes/156736893", desc: "races I've done"},
-  {title: "imdb", link: "http://www.imdb.com/name/nm3301340/", desc: "I used to do some film work"}
+  {title: "streeteasy", size: [800, 600], link: "https://streeteasy.com/tippingpoint", desc: "i worked with StreetEasy to build an interactive tool to help potential home owners understand the benefits of buying vs renting a home in New York City.", works: true},
+  {title: "observablehq",  size: [900, 450], link: "https://beta.observablehq.com/@pstuffa/", desc: "sample d3 work", works: true},
+  {title: "blocks", size: [900, 450], link: "https://bl.ocks.org/pstuffa", desc: "sample d3 work", works: false},
+  {title: "dashboard tests", size: [900, 450],link: "http://pstuffa.github.io/dashboard/countries.html", desc: "a sample business dashboard", works: true},
+  {title: "ultrarunning talk", size: [900, 450], link: "http://pstuffa.github.io/ultrarunning/", desc: "a talk I did on ultraunning", works: true},
+  {title: "linkedin", size: [900, 450], link: "https://www.linkedin.com/in/paul-buffa/", desc: "linkedin page", works: false},
+  {title: "athlinks", size: [900, 450], link: "https://www.athlinks.com/athletes/156736893", desc: "races I've done", works: true},
+  {title: "imdb", size: [900, 450], link: "http://www.imdb.com/name/nm3301340/", desc: "I used to do some film work", works: false}
 ]
 
 svg.append("g")
@@ -113,8 +131,18 @@ svg.append("g")
     .attr("xlink:href", function(d) { return d.link })
     .append("text")
     .text(function(d) { return d.title})
+    .on("mouseleave", function() {
+      d3.select(this).style("fill", "#000");
+    })
     .on("mouseenter", function(d) {
-      iframeDiv.attr("src", d.link )
+      d3.select(this).style("fill", "red")
+      if(d.works) {
+        iframeDiv.attr("src", d.link ).style("opacity", 1);
+        brokenDiv.style("opacity", 0);
+      } else {
+        iframeDiv.attr("src", d.link ).style("opacity", 0);
+        brokenDiv.style("opacity", 1);
+      }
     })
 
 var gloop = svg.append("g")

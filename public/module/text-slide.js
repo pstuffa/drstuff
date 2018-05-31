@@ -16,9 +16,31 @@ function chart(selection) {
         .append("text")
         .text("projects")
         .attr("y", 100)
-        .attr("x", width-100)
-        .style("font-size", 20)
+        .attr("x", width-50)
+        .style("text-anchor", "end")
+        .style("font-size", 30)
+        .on("mouseenter", function() { 
+          d3.select(this).style("stroke", window.fontColor)
+        })
+        .on("mouseleave", function() { 
+          d3.select(this).style("stroke", "none")
+        });
         // .append("a")
+
+     // var projects = svg.append("a")
+     //    .attr("xlink:href", "/me")
+     //    .append("text")
+     //    .text("about me")
+     //    .attr("y", 140)
+     //    .attr("x", width-50)
+     //    .style("text-anchor", "end")
+     //    .style("font-size", 30)
+     //    .on("mouseenter", function() { 
+     //      d3.select(this).style("stroke", window.fontColor)
+     //    })
+     //    .on("mouseleave", function() { 
+     //      d3.select(this).style("stroke", "none")
+     //    });
 
     var firstWord = svg.append("text")
         .attr("class", "firstWord")

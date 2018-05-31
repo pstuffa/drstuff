@@ -19,7 +19,8 @@
   "dependencies": {
     "ejs": "^2.4.2",
     "express": "^4.14.0",
-    "fs": "0.0.2"
+    "fs": "0.0.2",
+    "mapshaper": "^0.4.80"
   },
   "bugs": {
     "url": "https://github.com/pstuffa/drstuff/issues"
