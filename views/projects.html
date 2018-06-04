@@ -23,25 +23,21 @@
       stroke: #000;
     }
 
-    #iframeDiv {
+    #explanation {
       position: absolute;
-      top: 190px;
-      left: 220px;
+      top: 340px;
+      left: 275px;
       height: 450px;
       width: 800px;
     }
 
-    #brokenDiv {
+    #blurb {
       position: absolute;
-      top: 240px;
-      left: 220px;
-      height: 450px;
+      font-weight: 200;
+      top: 250px;
+      left: 100px;
+      height: 100px;
       width: 800px;
-    }
-
-    #iframeDiv iframe {
-      border: 1px solid #000;
-      text-decoration: none;
     }
 
   </style>
@@ -53,28 +49,27 @@
     <text id="taco">projects</text>
     <text id="burrito"> projects </text>
   </svg>
-
+  <div id="blurb">
+    I have been working in analysis, data science, and data visualization for companies that involve sensitive data, which is facinating to work with, but unfortuantely not available to share publicly. This is a short list of projects and example sites that I work on in my spare time. Hover to see a quick description and click to go to the site.
+  </div>
 <script>
 
 var svg = d3.select("svg")
     .attr("width", window.innerWidth)
     .attr("height", window.innerHeight);
 
+var blurb = d3.select("#blurb");
 
-
-var brokenDiv = d3.select("body")
+var explanation = d3.select("body")
     .append("div")
-    .attr("id", "brokenDiv")
-    .attr("top", 900)
-    .attr("height", 450)
-    .style("opacity", 0)
-    .html("<h2> iframe doesn't work for this site, so just click on the link. </h2>")
-var iframeDiv = d3.select("body")
-    .append("div")
-    .attr("id", "iframeDiv")
-    .append("iframe")
+    .attr("id", "explanation")
     .attr("width", 1100)
     .attr("height", 550)
+
+var image = explanation.append("img")
+    .attr("src", "")
+    .attr("width", 600)
+    .attr("height", 330)
     .style("opacity", 0)
 
 
@@ -111,38 +106,35 @@ var taco = d3.select("#taco").attr("x", 80).attr("y", 150)
   , burrito = d3.select("#burrito").attr("x", 90).attr("y", 200);
 
 var projectList = [
-  {title: "streeteasy", size: [800, 600], link: "https://streeteasy.com/tippingpoint", desc: "i worked with StreetEasy to build an interactive tool to help potential home owners understand the benefits of buying vs renting a home in New York City.", works: true},
-  {title: "observablehq",  size: [900, 450], link: "https://beta.observablehq.com/@pstuffa/", desc: "sample d3 work", works: true},
-  {title: "blocks", size: [900, 450], link: "https://bl.ocks.org/pstuffa", desc: "sample d3 work", works: false},
-  {title: "dashboard tests", size: [900, 450],link: "http://pstuffa.github.io/dashboard/countries.html", desc: "a sample business dashboard", works: true},
-  {title: "ultrarunning talk", size: [900, 450], link: "http://pstuffa.github.io/ultrarunning/", desc: "a talk I did on ultraunning", works: true},
-  {title: "linkedin", size: [900, 450], link: "https://www.linkedin.com/in/paul-buffa/", desc: "linkedin page", works: false},
-  {title: "athlinks", size: [900, 450], link: "https://www.athlinks.com/athletes/156736893", desc: "races I've done", works: true},
-  {title: "imdb", size: [900, 450], link: "http://www.imdb.com/name/nm3301340/", desc: "I used to do some film work", works: false}
+  {title: "streeteasy", size: [800, 600], link: "https://streeteasy.com/tippingpoint", desc: "I worked with StreetEasy to build an interactive tool to help potential home owners understand the benefits of buying vs renting a home in New York City. I worked on the design and implemention of the visualization. We're currently working on more visual analysis pieces.", works: true, "img": "./streeteasy.png"},
+  {title: "observablehq",  size: [900, 450], link: "https://beta.observablehq.com/@pstuffa/", desc: "ObservableHQ is a new site to showcase visual stories. It was created by Mike Bostock, the creator of D3. I have two notebooks published, one on making contours maps and another on recreating art by Yvaral, an Op artist. I am currently working on more notebooks.", works: true, "img": "./observable.png"},
+  {title: "blocks", size: [900, 450], link: "https://bl.ocks.org/pstuffa", desc: "This is my blocks page for sample D3 work. Most examples are small pieces of D3 code I've used in other projects. Many of the examples were used for class work, when I taught the D3 course for Metis.", works: false, "img": "./blocks.png"},
+  {title: "dashboard tests", size: [900, 450],link: "http://pstuffa.github.io/dashboard/countries.html", desc: "This was a small project testing out some business dashboard designs. I was interested in testing sparklines and slopegraphs for comparing categorical data.", works: true, "img": "./biz.png"},
+  {title: "ultrarunning talk", size: [900, 450], link: "http://pstuffa.github.io/ultrarunning/", desc: "The deck from a talk I did on being an ultramarathon runner. Presented at the Capital One Data Science Colloquium.", works: true, "img": "./ultra.png"}
 ]
 
 svg.append("g")
-  .attr("transform", "translate(90, 300)")
+  .attr("transform", "translate(90, 350)")
   .selectAll("a") 
   .data(projectList)
   .enter().append("g")
-  .attr("transform", function(d, i) { return "translate(0," + i*20 + ")" })
+  .attr("transform", function(d, i) { return "translate(0," + i*30 + ")" })
   .append("a") 
     .attr("xlink:href", function(d) { return d.link })
     .append("text")
     .text(function(d) { return d.title})
     .on("mouseleave", function() {
       d3.select(this).style("fill", "#000");
+      image.style("opacity", 0);
+
+      blurb.text("I have been working in analysis, data science, and data visualization for Kaplan and Capital One, and most of my work involves sensitive data that I am unable to share. This is a list of a couple of projects and example sites that I work on in my spare time. Hover to see a quick description and click to go to the site.");
     })
     .on("mouseenter", function(d) {
       d3.select(this).style("fill", "red")
-      if(d.works) {
-        iframeDiv.attr("src", d.link ).style("opacity", 1);
-        brokenDiv.style("opacity", 0);
-      } else {
-        iframeDiv.attr("src", d.link ).style("opacity", 0);
-        brokenDiv.style("opacity", 1);
-      }
+      image.attr("src", d.img )
+        .style("opacity", 1);
+
+      blurb.text(d.desc);
     })
 
 var gloop = svg.append("g")

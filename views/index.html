@@ -28,7 +28,7 @@
     <script>
      var i = 0;
      d3.timeout(function() {
-      d3.select("a").text("whatever")
+      d3.select("a").text("click here!!")
       d3.interval(function() {
         if(i % 2 == 0) {
           d3.select("a").style("color", "red")
@@ -39,18 +39,6 @@
       }, 100)
      }, 2000)
 
-     var j = 0
-    d3.timeout(function() {
-      d3.select("#click").style("opacity", 1)
-      d3.interval(function() {
-        if(j % 2 == 0) {
-          d3.select("#click").style("color", "green")
-        } else {
-          d3.select("#click").style("color", "#000")
-        }
-        j += 1;
-      }, 100)
-     }, 4000)
 
     </script>
 </body>

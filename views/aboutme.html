@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <script src="vendor/d3.v4.min.js"></script>
+  <style>
+    
+    body {
+        font-family: "Helvetica Neue", Arial;
+        font-weight: 100;
+    }
+
+    #burrito {
+      position: absolute;
+      font-size: 25px;
+    }
+
+    #taco {
+      position: absolute;
+      font-size: 100px;
+    }
+
+    .line {
+      stroke: #000;
+    }
+
+    #blurb {
+      position: absolute;
+      font-weight: 200;
+      top: 250px;
+      left: 100px;
+      height: 100px;
+      width: 800px;
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <svg> 
+    <text id="taco">Paul Buffa</text>
+    <text id="burrito"> pstuffa </text>
+  </svg>
+  <div id="blurb">
+    Hi there! I'm a data visualization engineer with a background in analysis and data science. I have been working in data visualization for the past five years, building visualizations, stories and dashboards in fields such as machine learning, people analytics, finance, marketing, fitness, and real estate. I am passionate about iterative and ethical design, and love documenting the process of building visualizations.
+    <br />
+    <br />
+    In addition to my work in data visualization, I am a multi-instrumentalist who has written and recorded two albums, and played in venues across the world. A dedicated runner, I run marathons and ultramarathons.
+  </div>
+<script>
+
+var svg = d3.select("svg")
+    .attr("width", window.innerWidth)
+    .attr("height", window.innerHeight);
+
+
+svg.append("line")
+  .attr("class", "line")
+  .attr("x1", 25)
+  .attr("x2", 200)
+  .attr("y1", 25)
+  .attr("y2", 25);
+
+svg.append("line")
+  .attr("class", "line")
+  .attr("x1", 25)
+  .attr("x2", 25)
+  .attr("y1", 25)
+  .attr("y2", 100);
+
+var projectList = [
+  {title: "linkedin", size: [900, 450], link: "https://www.linkedin.com/in/paul-buffa/", desc: "linkedin page", works: false},
+  {title: "athlinks", size: [900, 450], link: "https://www.athlinks.com/athletes/156736893", desc: "races I've done", works: true},
+  {title: "imdb", size: [900, 450], link: "http://www.imdb.com/name/nm3301340/", desc: "I used to do some film work", works: false}
+]
+
+svg.append("g")
+  .attr("transform", "translate(90, 420)")
+  .selectAll("a") 
+  .data(projectList)
+  .enter().append("g")
+  .attr("transform", function(d, i) { return "translate(0," + i*30 + ")" })
+  .append("a") 
+    .attr("xlink:href", function(d) { return d.link })
+    .append("text")
+    .text(function(d) { return d.title})
+    .on("mouseleave", function() {
+      d3.select(this).style("fill", "#000");
+    })
+    .on("mouseenter", function(d) {
+      d3.select(this).style("fill", "red");
+    })
+
+var taco = d3.select("#taco").attr("x", 80).attr("y", 150)
+  , burrito = d3.select("#burrito").attr("x", 90).attr("y", 200);
+
+
+var i = 0;
+d3.timeout(function() {
+
+  d3.interval(function() {
+
+    burrito.style("opacity", i % 3 == 0 ? .2 : 1);
+    ++i;
+
+  }, 100) 
+}, 1000);
+
+</script>
+</body>
+
+
+
+
+
